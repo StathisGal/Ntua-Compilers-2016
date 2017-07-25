@@ -1,0 +1,3472 @@
+   0  $accept : %entry% $end
+
+   1  start : program T_EOF
+
+   2  program : program declaration
+   3          | declaration
+
+   4  declaration : variable_declaration
+   5              | function_declaration
+   6              | function_definition
+
+   7  variable_declaration : type_t declarators T_SEMIC
+
+   8  type_t : basic_type star
+
+   9  star :
+  10       | star T_TIMES
+
+  11  basic_type : T_INTTYPE
+  12             | T_CHARTYPE
+  13             | T_BOOLTYPE
+  14             | T_DOUBLETYPE
+
+  15  declarator : T_ID
+  16             | T_ID T_LSB constant_expression T_RSB
+
+  17  declarators : declarator T_COMMA declarators
+  18              | declarator
+
+  19  function_declaration : type_t T_ID T_LP T_RP T_SEMIC
+  20                       | type_t T_ID T_LP parameter_list T_RP T_SEMIC
+  21                       | T_VOID T_ID T_LP T_RP T_SEMIC
+  22                       | T_VOID T_ID T_LP parameter_list T_RP T_SEMIC
+
+  23  parameter_list : parameter parameters
+
+  24  parameters :
+  25             | T_COMMA parameter parameters
+
+  26  parameter : T_BYREF type_t T_ID
+  27            | type_t T_ID
+
+  28  function_definition : type_t T_ID T_LP T_RP T_LB declarations statements T_RB
+  29                      | type_t T_ID T_LP parameter_list T_RP T_LB declarations statements T_RB
+  30                      | T_VOID T_ID T_LP T_RP T_LB declarations statements T_RB
+  31                      | T_VOID T_ID T_LP parameter_list T_RP T_LB declarations statements T_RB
+
+  32  declarations :
+  33               | declaration declarations
+
+  34  statements :
+  35             | statements statement
+
+  36  statement : T_SEMIC
+  37            | expression T_SEMIC
+  38            | T_LB statements T_RB
+  39            | T_IF T_LP expression T_RP statement
+  40            | T_IF T_LP expression T_RP statement T_ELSE statement
+  41            | optional_t_id_t_colon T_FOR T_LP optional_expression T_SEMIC optional_expression T_SEMIC optional_expression T_RP statement
+  42            | T_CONTINUE T_SEMIC
+  43            | T_CONTINUE T_ID T_SEMIC
+  44            | T_BREAK T_SEMIC
+  45            | T_BREAK T_ID T_SEMIC
+  46            | T_RETURN T_SEMIC
+  47            | T_RETURN expression T_SEMIC
+
+  48  optional_t_id_t_colon :
+  49                        | T_ID T_COLON
+
+  50  optional_expression :
+  51                      | expression
+
+  52  expression : T_ID
+  53             | T_LP expression T_RP
+  54             | T_TRUE
+  55             | T_FALSE
+  56             | T_NULL
+  57             | T_INT
+  58             | T_CHAR
+  59             | T_DOUBLE
+  60             | T_STRING
+  61             | T_ID T_LP T_RP
+  62             | T_ID T_LP expression_list T_RP
+  63             | expression T_LSB expression T_RSB
+  64             | unary_operator expression
+  65             | expression ar_binary_operator expression
+  66             | expression cmp_binary_operator expression
+  67             | expression log_binary_operator expression
+  68             | expression T_COMMA expression
+  69             | unary_assignment expression
+  70             | expression unary_assignment
+  71             | expression binary_assignment expression
+  72             | T_LP type_t T_RP expression
+  73             | expression T_QUES expression T_COLON expression
+  74             | T_NEW type_t
+  75             | T_NEW basic_type star T_TIMES expression
+  76             | T_NEW type_t T_LSB expression T_RSB
+  77             | T_DELETE expression
+
+  78  expression_list : expression
+  79                  | expression_list T_COMMA expression
+
+  80  constant_expression : expression
+
+  81  unary_operator : T_AMP
+  82                 | T_TIMES
+  83                 | T_PLUS
+  84                 | T_MINUS
+  85                 | T_EX
+
+  86  ar_binary_operator : T_TIMES
+  87                     | T_DIV
+  88                     | T_MOD
+  89                     | T_PLUS
+  90                     | T_MINUS
+
+  91  cmp_binary_operator : T_BIG
+  92                      | T_SMALL
+  93                      | T_BEQ
+  94                      | T_SEQ
+  95                      | T_EQ
+  96                      | T_DIF
+
+  97  log_binary_operator : T_AND
+  98                      | T_OR
+
+  99  unary_assignment : T_PP
+ 100                   | T_MM
+
+ 101  binary_assignment : T_ASS
+ 102                    | T_TEQ
+ 103                    | T_DEQ
+ 104                    | T_MEQ
+ 105                    | T_PEQ
+ 106                    | T_MIEQ
+
+ 107  %entry% : '\001' start
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . start  (107)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_VOID  shift 7
+	.  error
+
+	start  goto 8
+	program  goto 9
+	declaration  goto 10
+	variable_declaration  goto 11
+	function_declaration  goto 12
+	function_definition  goto 13
+	type_t  goto 14
+	basic_type  goto 15
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	basic_type : T_BOOLTYPE .  (13)
+
+	.  reduce 13
+
+
+state 4
+	basic_type : T_CHARTYPE .  (12)
+
+	.  reduce 12
+
+
+state 5
+	basic_type : T_DOUBLETYPE .  (14)
+
+	.  reduce 14
+
+
+state 6
+	basic_type : T_INTTYPE .  (11)
+
+	.  reduce 11
+
+
+state 7
+	function_declaration : T_VOID . T_ID T_LP T_RP T_SEMIC  (21)
+	function_declaration : T_VOID . T_ID T_LP parameter_list T_RP T_SEMIC  (22)
+	function_definition : T_VOID . T_ID T_LP T_RP T_LB declarations statements T_RB  (30)
+	function_definition : T_VOID . T_ID T_LP parameter_list T_RP T_LB declarations statements T_RB  (31)
+
+	T_ID  shift 16
+	.  error
+
+
+state 8
+	%entry% : '\001' start .  (107)
+
+	.  reduce 107
+
+
+state 9
+	start : program . T_EOF  (1)
+	program : program . declaration  (2)
+
+	T_EOF  shift 17
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_VOID  shift 7
+	.  error
+
+	declaration  goto 18
+	variable_declaration  goto 11
+	function_declaration  goto 12
+	function_definition  goto 13
+	type_t  goto 14
+	basic_type  goto 15
+
+
+state 10
+	program : declaration .  (3)
+
+	.  reduce 3
+
+
+state 11
+	declaration : variable_declaration .  (4)
+
+	.  reduce 4
+
+
+state 12
+	declaration : function_declaration .  (5)
+
+	.  reduce 5
+
+
+state 13
+	declaration : function_definition .  (6)
+
+	.  reduce 6
+
+
+state 14
+	variable_declaration : type_t . declarators T_SEMIC  (7)
+	function_declaration : type_t . T_ID T_LP T_RP T_SEMIC  (19)
+	function_declaration : type_t . T_ID T_LP parameter_list T_RP T_SEMIC  (20)
+	function_definition : type_t . T_ID T_LP T_RP T_LB declarations statements T_RB  (28)
+	function_definition : type_t . T_ID T_LP parameter_list T_RP T_LB declarations statements T_RB  (29)
+
+	T_ID  shift 19
+	.  error
+
+	declarators  goto 20
+	declarator  goto 21
+
+
+state 15
+	type_t : basic_type . star  (8)
+	star : .  (9)
+
+	.  reduce 9
+
+	star  goto 22
+
+
+state 16
+	function_declaration : T_VOID T_ID . T_LP T_RP T_SEMIC  (21)
+	function_declaration : T_VOID T_ID . T_LP parameter_list T_RP T_SEMIC  (22)
+	function_definition : T_VOID T_ID . T_LP T_RP T_LB declarations statements T_RB  (30)
+	function_definition : T_VOID T_ID . T_LP parameter_list T_RP T_LB declarations statements T_RB  (31)
+
+	T_LP  shift 23
+	.  error
+
+
+state 17
+	start : program T_EOF .  (1)
+
+	.  reduce 1
+
+
+state 18
+	program : program declaration .  (2)
+
+	.  reduce 2
+
+
+state 19
+	declarator : T_ID .  (15)
+	declarator : T_ID . T_LSB constant_expression T_RSB  (16)
+	function_declaration : type_t T_ID . T_LP T_RP T_SEMIC  (19)
+	function_declaration : type_t T_ID . T_LP parameter_list T_RP T_SEMIC  (20)
+	function_definition : type_t T_ID . T_LP T_RP T_LB declarations statements T_RB  (28)
+	function_definition : type_t T_ID . T_LP parameter_list T_RP T_LB declarations statements T_RB  (29)
+
+	T_LP  shift 24
+	T_LSB  shift 25
+	T_SEMIC  reduce 15
+	T_COMMA  reduce 15
+
+
+state 20
+	variable_declaration : type_t declarators . T_SEMIC  (7)
+
+	T_SEMIC  shift 26
+	.  error
+
+
+state 21
+	declarators : declarator . T_COMMA declarators  (17)
+	declarators : declarator .  (18)
+
+	T_COMMA  shift 27
+	T_SEMIC  reduce 18
+
+
+state 22
+	type_t : basic_type star .  (8)
+	star : star . T_TIMES  (10)
+
+	T_TIMES  shift 28
+	T_ID  reduce 8
+	T_RP  reduce 8
+
+
+state 23
+	function_declaration : T_VOID T_ID T_LP . T_RP T_SEMIC  (21)
+	function_declaration : T_VOID T_ID T_LP . parameter_list T_RP T_SEMIC  (22)
+	function_definition : T_VOID T_ID T_LP . T_RP T_LB declarations statements T_RB  (30)
+	function_definition : T_VOID T_ID T_LP . parameter_list T_RP T_LB declarations statements T_RB  (31)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_BYREF  shift 29
+	T_RP  shift 30
+	.  error
+
+	type_t  goto 31
+	basic_type  goto 15
+	parameter_list  goto 32
+	parameter  goto 33
+
+
+state 24
+	function_declaration : type_t T_ID T_LP . T_RP T_SEMIC  (19)
+	function_declaration : type_t T_ID T_LP . parameter_list T_RP T_SEMIC  (20)
+	function_definition : type_t T_ID T_LP . T_RP T_LB declarations statements T_RB  (28)
+	function_definition : type_t T_ID T_LP . parameter_list T_RP T_LB declarations statements T_RB  (29)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_BYREF  shift 29
+	T_RP  shift 34
+	.  error
+
+	type_t  goto 31
+	basic_type  goto 15
+	parameter_list  goto 35
+	parameter  goto 33
+
+
+state 25
+	declarator : T_ID T_LSB . constant_expression T_RSB  (16)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	constant_expression  goto 54
+	expression  goto 55
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 26
+	variable_declaration : type_t declarators T_SEMIC .  (7)
+
+	.  reduce 7
+
+
+state 27
+	declarators : declarator T_COMMA . declarators  (17)
+
+	T_ID  shift 58
+	.  error
+
+	declarators  goto 59
+	declarator  goto 21
+
+
+state 28
+	star : star T_TIMES .  (10)
+
+	.  reduce 10
+
+
+state 29
+	parameter : T_BYREF . type_t T_ID  (26)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	.  error
+
+	type_t  goto 60
+	basic_type  goto 15
+
+
+state 30
+	function_declaration : T_VOID T_ID T_LP T_RP . T_SEMIC  (21)
+	function_definition : T_VOID T_ID T_LP T_RP . T_LB declarations statements T_RB  (30)
+
+	T_SEMIC  shift 61
+	T_LB  shift 62
+	.  error
+
+
+state 31
+	parameter : type_t . T_ID  (27)
+
+	T_ID  shift 63
+	.  error
+
+
+state 32
+	function_declaration : T_VOID T_ID T_LP parameter_list . T_RP T_SEMIC  (22)
+	function_definition : T_VOID T_ID T_LP parameter_list . T_RP T_LB declarations statements T_RB  (31)
+
+	T_RP  shift 64
+	.  error
+
+
+state 33
+	parameter_list : parameter . parameters  (23)
+	parameters : .  (24)
+
+	T_COMMA  shift 65
+	T_RP  reduce 24
+
+	parameters  goto 66
+
+
+state 34
+	function_declaration : type_t T_ID T_LP T_RP . T_SEMIC  (19)
+	function_definition : type_t T_ID T_LP T_RP . T_LB declarations statements T_RB  (28)
+
+	T_SEMIC  shift 67
+	T_LB  shift 68
+	.  error
+
+
+state 35
+	function_declaration : type_t T_ID T_LP parameter_list . T_RP T_SEMIC  (20)
+	function_definition : type_t T_ID T_LP parameter_list . T_RP T_LB declarations statements T_RB  (29)
+
+	T_RP  shift 69
+	.  error
+
+
+state 36
+	unary_operator : T_PLUS .  (83)
+
+	.  reduce 83
+
+
+state 37
+	unary_operator : T_MINUS .  (84)
+
+	.  reduce 84
+
+
+state 38
+	unary_operator : T_TIMES .  (82)
+
+	.  reduce 82
+
+
+state 39
+	expression : T_ID .  (52)
+	expression : T_ID . T_LP T_RP  (61)
+	expression : T_ID . T_LP expression_list T_RP  (62)
+
+	T_LP  shift 70
+	T_QUES  reduce 52
+	T_PLUS  reduce 52
+	T_MINUS  reduce 52
+	T_TIMES  reduce 52
+	T_DIV  reduce 52
+	T_MOD  reduce 52
+	T_SEMIC  reduce 52
+	T_PP  reduce 52
+	T_MM  reduce 52
+	T_AND  reduce 52
+	T_OR  reduce 52
+	T_ASS  reduce 52
+	T_PEQ  reduce 52
+	T_MIEQ  reduce 52
+	T_TEQ  reduce 52
+	T_DEQ  reduce 52
+	T_MEQ  reduce 52
+	T_COMMA  reduce 52
+	T_EQ  reduce 52
+	T_DIF  reduce 52
+	T_BIG  reduce 52
+	T_SMALL  reduce 52
+	T_BEQ  reduce 52
+	T_SEQ  reduce 52
+	T_COLON  reduce 52
+	T_RP  reduce 52
+	T_RSB  reduce 52
+	T_LSB  reduce 52
+
+
+state 40
+	expression : T_INT .  (57)
+
+	.  reduce 57
+
+
+state 41
+	expression : T_DOUBLE .  (59)
+
+	.  reduce 59
+
+
+state 42
+	expression : T_CHAR .  (58)
+
+	.  reduce 58
+
+
+state 43
+	expression : T_STRING .  (60)
+
+	.  reduce 60
+
+
+state 44
+	expression : T_DELETE . expression  (77)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 71
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 45
+	expression : T_FALSE .  (55)
+
+	.  reduce 55
+
+
+state 46
+	expression : T_NEW . type_t  (74)
+	expression : T_NEW . basic_type star T_TIMES expression  (75)
+	expression : T_NEW . type_t T_LSB expression T_RSB  (76)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	.  error
+
+	type_t  goto 72
+	basic_type  goto 73
+
+
+state 47
+	expression : T_NULL .  (56)
+
+	.  reduce 56
+
+
+state 48
+	expression : T_TRUE .  (54)
+
+	.  reduce 54
+
+
+state 49
+	unary_assignment : T_PP .  (99)
+
+	.  reduce 99
+
+
+state 50
+	unary_assignment : T_MM .  (100)
+
+	.  reduce 100
+
+
+state 51
+	unary_operator : T_AMP .  (81)
+
+	.  reduce 81
+
+
+state 52
+	unary_operator : T_EX .  (85)
+
+	.  reduce 85
+
+
+state 53
+	expression : T_LP . expression T_RP  (53)
+	expression : T_LP . type_t T_RP expression  (72)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DELETE  shift 44
+	T_DOUBLETYPE  shift 5
+	T_FALSE  shift 45
+	T_INTTYPE  shift 6
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	type_t  goto 74
+	basic_type  goto 15
+	expression  goto 75
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 54
+	declarator : T_ID T_LSB constant_expression . T_RSB  (16)
+
+	T_RSB  shift 76
+	.  error
+
+
+state 55
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+	constant_expression : expression .  (80)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	T_RSB  reduce 80
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 56
+	expression : unary_operator . expression  (64)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 104
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 57
+	expression : unary_assignment . expression  (69)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 105
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 58
+	declarator : T_ID .  (15)
+	declarator : T_ID . T_LSB constant_expression T_RSB  (16)
+
+	T_LSB  shift 25
+	T_SEMIC  reduce 15
+	T_COMMA  reduce 15
+
+
+state 59
+	declarators : declarator T_COMMA declarators .  (17)
+
+	.  reduce 17
+
+
+state 60
+	parameter : T_BYREF type_t . T_ID  (26)
+
+	T_ID  shift 106
+	.  error
+
+
+state 61
+	function_declaration : T_VOID T_ID T_LP T_RP T_SEMIC .  (21)
+
+	.  reduce 21
+
+
+state 62
+	function_definition : T_VOID T_ID T_LP T_RP T_LB . declarations statements T_RB  (30)
+	declarations : .  (32)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_VOID  shift 7
+	T_PLUS  reduce 32
+	T_MINUS  reduce 32
+	T_TIMES  reduce 32
+	T_ID  reduce 32
+	T_INT  reduce 32
+	T_DOUBLE  reduce 32
+	T_CHAR  reduce 32
+	T_STRING  reduce 32
+	T_IF  reduce 32
+	T_BREAK  reduce 32
+	T_CONTINUE  reduce 32
+	T_DELETE  reduce 32
+	T_FALSE  reduce 32
+	T_NEW  reduce 32
+	T_NULL  reduce 32
+	T_RETURN  reduce 32
+	T_TRUE  reduce 32
+	T_FOR  reduce 32
+	T_SEMIC  reduce 32
+	T_PP  reduce 32
+	T_MM  reduce 32
+	T_AMP  reduce 32
+	T_EX  reduce 32
+	T_LP  reduce 32
+	T_RB  reduce 32
+	T_LB  reduce 32
+
+	declaration  goto 107
+	variable_declaration  goto 11
+	function_declaration  goto 12
+	function_definition  goto 13
+	type_t  goto 14
+	basic_type  goto 15
+	declarations  goto 108
+
+
+state 63
+	parameter : type_t T_ID .  (27)
+
+	.  reduce 27
+
+
+state 64
+	function_declaration : T_VOID T_ID T_LP parameter_list T_RP . T_SEMIC  (22)
+	function_definition : T_VOID T_ID T_LP parameter_list T_RP . T_LB declarations statements T_RB  (31)
+
+	T_SEMIC  shift 109
+	T_LB  shift 110
+	.  error
+
+
+state 65
+	parameters : T_COMMA . parameter parameters  (25)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_BYREF  shift 29
+	.  error
+
+	type_t  goto 31
+	basic_type  goto 15
+	parameter  goto 111
+
+
+state 66
+	parameter_list : parameter parameters .  (23)
+
+	.  reduce 23
+
+
+state 67
+	function_declaration : type_t T_ID T_LP T_RP T_SEMIC .  (19)
+
+	.  reduce 19
+
+
+state 68
+	function_definition : type_t T_ID T_LP T_RP T_LB . declarations statements T_RB  (28)
+	declarations : .  (32)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_VOID  shift 7
+	T_PLUS  reduce 32
+	T_MINUS  reduce 32
+	T_TIMES  reduce 32
+	T_ID  reduce 32
+	T_INT  reduce 32
+	T_DOUBLE  reduce 32
+	T_CHAR  reduce 32
+	T_STRING  reduce 32
+	T_IF  reduce 32
+	T_BREAK  reduce 32
+	T_CONTINUE  reduce 32
+	T_DELETE  reduce 32
+	T_FALSE  reduce 32
+	T_NEW  reduce 32
+	T_NULL  reduce 32
+	T_RETURN  reduce 32
+	T_TRUE  reduce 32
+	T_FOR  reduce 32
+	T_SEMIC  reduce 32
+	T_PP  reduce 32
+	T_MM  reduce 32
+	T_AMP  reduce 32
+	T_EX  reduce 32
+	T_LP  reduce 32
+	T_RB  reduce 32
+	T_LB  reduce 32
+
+	declaration  goto 107
+	variable_declaration  goto 11
+	function_declaration  goto 12
+	function_definition  goto 13
+	type_t  goto 14
+	basic_type  goto 15
+	declarations  goto 112
+
+
+state 69
+	function_declaration : type_t T_ID T_LP parameter_list T_RP . T_SEMIC  (20)
+	function_definition : type_t T_ID T_LP parameter_list T_RP . T_LB declarations statements T_RB  (29)
+
+	T_SEMIC  shift 113
+	T_LB  shift 114
+	.  error
+
+
+state 70
+	expression : T_ID T_LP . T_RP  (61)
+	expression : T_ID T_LP . expression_list T_RP  (62)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_RP  shift 115
+	.  error
+
+	expression  goto 116
+	expression_list  goto 117
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 71
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+	expression : T_DELETE expression .  (77)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	T_SEMIC  reduce 77
+	T_COLON  reduce 77
+	T_RP  reduce 77
+	T_RSB  reduce 77
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 72
+	expression : T_NEW type_t .  (74)
+	expression : T_NEW type_t . T_LSB expression T_RSB  (76)
+
+	T_LSB  shift 118
+	T_QUES  reduce 74
+	T_PLUS  reduce 74
+	T_MINUS  reduce 74
+	T_TIMES  reduce 74
+	T_DIV  reduce 74
+	T_MOD  reduce 74
+	T_SEMIC  reduce 74
+	T_PP  reduce 74
+	T_MM  reduce 74
+	T_AND  reduce 74
+	T_OR  reduce 74
+	T_ASS  reduce 74
+	T_PEQ  reduce 74
+	T_MIEQ  reduce 74
+	T_TEQ  reduce 74
+	T_DEQ  reduce 74
+	T_MEQ  reduce 74
+	T_COMMA  reduce 74
+	T_EQ  reduce 74
+	T_DIF  reduce 74
+	T_BIG  reduce 74
+	T_SMALL  reduce 74
+	T_BEQ  reduce 74
+	T_SEQ  reduce 74
+	T_COLON  reduce 74
+	T_RP  reduce 74
+	T_RSB  reduce 74
+
+
+state 73
+	type_t : basic_type . star  (8)
+	expression : T_NEW basic_type . star T_TIMES expression  (75)
+	star : .  (9)
+
+	.  reduce 9
+
+	star  goto 119
+
+
+state 74
+	expression : T_LP type_t . T_RP expression  (72)
+
+	T_RP  shift 120
+	.  error
+
+
+state 75
+	expression : T_LP expression . T_RP  (53)
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_RP  shift 121
+	T_LSB  shift 98
+	.  error
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 76
+	declarator : T_ID T_LSB constant_expression T_RSB .  (16)
+
+	.  reduce 16
+
+
+state 77
+	expression : expression T_QUES . expression T_COLON expression  (73)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 122
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 78
+	ar_binary_operator : T_PLUS .  (89)
+
+	.  reduce 89
+
+
+state 79
+	ar_binary_operator : T_MINUS .  (90)
+
+	.  reduce 90
+
+
+state 80
+	ar_binary_operator : T_TIMES .  (86)
+
+	.  reduce 86
+
+
+state 81
+	ar_binary_operator : T_DIV .  (87)
+
+	.  reduce 87
+
+
+state 82
+	ar_binary_operator : T_MOD .  (88)
+
+	.  reduce 88
+
+
+state 83
+	log_binary_operator : T_AND .  (97)
+
+	.  reduce 97
+
+
+state 84
+	log_binary_operator : T_OR .  (98)
+
+	.  reduce 98
+
+
+state 85
+	binary_assignment : T_ASS .  (101)
+
+	.  reduce 101
+
+
+state 86
+	binary_assignment : T_PEQ .  (105)
+
+	.  reduce 105
+
+
+state 87
+	binary_assignment : T_MIEQ .  (106)
+
+	.  reduce 106
+
+
+state 88
+	binary_assignment : T_TEQ .  (102)
+
+	.  reduce 102
+
+
+state 89
+	binary_assignment : T_DEQ .  (103)
+
+	.  reduce 103
+
+
+state 90
+	binary_assignment : T_MEQ .  (104)
+
+	.  reduce 104
+
+
+state 91
+	expression : expression T_COMMA . expression  (68)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 123
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 92
+	cmp_binary_operator : T_EQ .  (95)
+
+	.  reduce 95
+
+
+state 93
+	cmp_binary_operator : T_DIF .  (96)
+
+	.  reduce 96
+
+
+state 94
+	cmp_binary_operator : T_BIG .  (91)
+
+	.  reduce 91
+
+
+state 95
+	cmp_binary_operator : T_SMALL .  (92)
+
+	.  reduce 92
+
+
+state 96
+	cmp_binary_operator : T_BEQ .  (93)
+
+	.  reduce 93
+
+
+state 97
+	cmp_binary_operator : T_SEQ .  (94)
+
+	.  reduce 94
+
+
+state 98
+	expression : expression T_LSB . expression T_RSB  (63)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 124
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 99
+	expression : expression ar_binary_operator . expression  (65)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 125
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 100
+	expression : expression cmp_binary_operator . expression  (66)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 126
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 101
+	expression : expression log_binary_operator . expression  (67)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 127
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 102
+	expression : expression unary_assignment .  (70)
+
+	.  reduce 70
+
+
+state 103
+	expression : expression binary_assignment . expression  (71)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 128
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 104
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : unary_operator expression .  (64)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_LSB  shift 98
+	T_QUES  reduce 64
+	T_PLUS  reduce 64
+	T_MINUS  reduce 64
+	T_TIMES  reduce 64
+	T_DIV  reduce 64
+	T_MOD  reduce 64
+	T_SEMIC  reduce 64
+	T_PP  reduce 64
+	T_MM  reduce 64
+	T_AND  reduce 64
+	T_OR  reduce 64
+	T_ASS  reduce 64
+	T_PEQ  reduce 64
+	T_MIEQ  reduce 64
+	T_TEQ  reduce 64
+	T_DEQ  reduce 64
+	T_MEQ  reduce 64
+	T_COMMA  reduce 64
+	T_EQ  reduce 64
+	T_DIF  reduce 64
+	T_BIG  reduce 64
+	T_SMALL  reduce 64
+	T_BEQ  reduce 64
+	T_SEQ  reduce 64
+	T_COLON  reduce 64
+	T_RP  reduce 64
+	T_RSB  reduce 64
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 105
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : unary_assignment expression .  (69)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	.  reduce 69
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 106
+	parameter : T_BYREF type_t T_ID .  (26)
+
+	.  reduce 26
+
+
+state 107
+	declarations : declaration . declarations  (33)
+	declarations : .  (32)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_VOID  shift 7
+	T_PLUS  reduce 32
+	T_MINUS  reduce 32
+	T_TIMES  reduce 32
+	T_ID  reduce 32
+	T_INT  reduce 32
+	T_DOUBLE  reduce 32
+	T_CHAR  reduce 32
+	T_STRING  reduce 32
+	T_IF  reduce 32
+	T_BREAK  reduce 32
+	T_CONTINUE  reduce 32
+	T_DELETE  reduce 32
+	T_FALSE  reduce 32
+	T_NEW  reduce 32
+	T_NULL  reduce 32
+	T_RETURN  reduce 32
+	T_TRUE  reduce 32
+	T_FOR  reduce 32
+	T_SEMIC  reduce 32
+	T_PP  reduce 32
+	T_MM  reduce 32
+	T_AMP  reduce 32
+	T_EX  reduce 32
+	T_LP  reduce 32
+	T_RB  reduce 32
+	T_LB  reduce 32
+
+	declaration  goto 107
+	variable_declaration  goto 11
+	function_declaration  goto 12
+	function_definition  goto 13
+	type_t  goto 14
+	basic_type  goto 15
+	declarations  goto 129
+
+
+state 108
+	function_definition : T_VOID T_ID T_LP T_RP T_LB declarations . statements T_RB  (30)
+	statements : .  (34)
+
+	.  reduce 34
+
+	statements  goto 130
+
+
+state 109
+	function_declaration : T_VOID T_ID T_LP parameter_list T_RP T_SEMIC .  (22)
+
+	.  reduce 22
+
+
+state 110
+	function_definition : T_VOID T_ID T_LP parameter_list T_RP T_LB . declarations statements T_RB  (31)
+	declarations : .  (32)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_VOID  shift 7
+	T_PLUS  reduce 32
+	T_MINUS  reduce 32
+	T_TIMES  reduce 32
+	T_ID  reduce 32
+	T_INT  reduce 32
+	T_DOUBLE  reduce 32
+	T_CHAR  reduce 32
+	T_STRING  reduce 32
+	T_IF  reduce 32
+	T_BREAK  reduce 32
+	T_CONTINUE  reduce 32
+	T_DELETE  reduce 32
+	T_FALSE  reduce 32
+	T_NEW  reduce 32
+	T_NULL  reduce 32
+	T_RETURN  reduce 32
+	T_TRUE  reduce 32
+	T_FOR  reduce 32
+	T_SEMIC  reduce 32
+	T_PP  reduce 32
+	T_MM  reduce 32
+	T_AMP  reduce 32
+	T_EX  reduce 32
+	T_LP  reduce 32
+	T_RB  reduce 32
+	T_LB  reduce 32
+
+	declaration  goto 107
+	variable_declaration  goto 11
+	function_declaration  goto 12
+	function_definition  goto 13
+	type_t  goto 14
+	basic_type  goto 15
+	declarations  goto 131
+
+
+state 111
+	parameters : T_COMMA parameter . parameters  (25)
+	parameters : .  (24)
+
+	T_COMMA  shift 65
+	T_RP  reduce 24
+
+	parameters  goto 132
+
+
+state 112
+	function_definition : type_t T_ID T_LP T_RP T_LB declarations . statements T_RB  (28)
+	statements : .  (34)
+
+	.  reduce 34
+
+	statements  goto 133
+
+
+state 113
+	function_declaration : type_t T_ID T_LP parameter_list T_RP T_SEMIC .  (20)
+
+	.  reduce 20
+
+
+state 114
+	function_definition : type_t T_ID T_LP parameter_list T_RP T_LB . declarations statements T_RB  (29)
+	declarations : .  (32)
+
+	T_BOOLTYPE  shift 3
+	T_CHARTYPE  shift 4
+	T_DOUBLETYPE  shift 5
+	T_INTTYPE  shift 6
+	T_VOID  shift 7
+	T_PLUS  reduce 32
+	T_MINUS  reduce 32
+	T_TIMES  reduce 32
+	T_ID  reduce 32
+	T_INT  reduce 32
+	T_DOUBLE  reduce 32
+	T_CHAR  reduce 32
+	T_STRING  reduce 32
+	T_IF  reduce 32
+	T_BREAK  reduce 32
+	T_CONTINUE  reduce 32
+	T_DELETE  reduce 32
+	T_FALSE  reduce 32
+	T_NEW  reduce 32
+	T_NULL  reduce 32
+	T_RETURN  reduce 32
+	T_TRUE  reduce 32
+	T_FOR  reduce 32
+	T_SEMIC  reduce 32
+	T_PP  reduce 32
+	T_MM  reduce 32
+	T_AMP  reduce 32
+	T_EX  reduce 32
+	T_LP  reduce 32
+	T_RB  reduce 32
+	T_LB  reduce 32
+
+	declaration  goto 107
+	variable_declaration  goto 11
+	function_declaration  goto 12
+	function_definition  goto 13
+	type_t  goto 14
+	basic_type  goto 15
+	declarations  goto 134
+
+
+state 115
+	expression : T_ID T_LP T_RP .  (61)
+
+	.  reduce 61
+
+
+state 116
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+	expression_list : expression .  (78)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	T_COMMA  reduce 78
+	T_RP  reduce 78
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 117
+	expression : T_ID T_LP expression_list . T_RP  (62)
+	expression_list : expression_list . T_COMMA expression  (79)
+
+	T_COMMA  shift 135
+	T_RP  shift 136
+	.  error
+
+
+state 118
+	expression : T_NEW type_t T_LSB . expression T_RSB  (76)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 137
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 119
+	type_t : basic_type star .  (8)
+	star : star . T_TIMES  (10)
+	expression : T_NEW basic_type star . T_TIMES expression  (75)
+
+	T_TIMES  shift 138
+	T_QUES  reduce 8
+	T_PLUS  reduce 8
+	T_MINUS  reduce 8
+	T_DIV  reduce 8
+	T_MOD  reduce 8
+	T_SEMIC  reduce 8
+	T_PP  reduce 8
+	T_MM  reduce 8
+	T_AND  reduce 8
+	T_OR  reduce 8
+	T_ASS  reduce 8
+	T_PEQ  reduce 8
+	T_MIEQ  reduce 8
+	T_TEQ  reduce 8
+	T_DEQ  reduce 8
+	T_MEQ  reduce 8
+	T_COMMA  reduce 8
+	T_EQ  reduce 8
+	T_DIF  reduce 8
+	T_BIG  reduce 8
+	T_SMALL  reduce 8
+	T_BEQ  reduce 8
+	T_SEQ  reduce 8
+	T_COLON  reduce 8
+	T_RP  reduce 8
+	T_RSB  reduce 8
+	T_LSB  reduce 8
+
+
+state 120
+	expression : T_LP type_t T_RP . expression  (72)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 139
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 121
+	expression : T_LP expression T_RP .  (53)
+
+	.  reduce 53
+
+
+state 122
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+	expression : expression T_QUES expression . T_COLON expression  (73)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_COLON  shift 140
+	T_LSB  shift 98
+	.  error
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 123
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression T_COMMA expression .  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	T_SEMIC  reduce 68
+	T_COMMA  reduce 68
+	T_COLON  reduce 68
+	T_RP  reduce 68
+	T_RSB  reduce 68
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 124
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression T_LSB expression . T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_RSB  shift 141
+	T_LSB  shift 98
+	.  error
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 125
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression ar_binary_operator expression .  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_LSB  shift 98
+	T_QUES  reduce 65
+	T_PLUS  reduce 65
+	T_MINUS  reduce 65
+	T_SEMIC  reduce 65
+	T_AND  reduce 65
+	T_OR  reduce 65
+	T_ASS  reduce 65
+	T_PEQ  reduce 65
+	T_MIEQ  reduce 65
+	T_TEQ  reduce 65
+	T_DEQ  reduce 65
+	T_MEQ  reduce 65
+	T_COMMA  reduce 65
+	T_EQ  reduce 65
+	T_DIF  reduce 65
+	T_BIG  reduce 65
+	T_SMALL  reduce 65
+	T_BEQ  reduce 65
+	T_SEQ  reduce 65
+	T_COLON  reduce 65
+	T_RP  reduce 65
+	T_RSB  reduce 65
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 126
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression cmp_binary_operator expression .  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_LSB  shift 98
+	T_QUES  reduce 66
+	T_SEMIC  reduce 66
+	T_AND  reduce 66
+	T_OR  reduce 66
+	T_ASS  reduce 66
+	T_PEQ  reduce 66
+	T_MIEQ  reduce 66
+	T_TEQ  reduce 66
+	T_DEQ  reduce 66
+	T_MEQ  reduce 66
+	T_COMMA  reduce 66
+	T_EQ  reduce 66
+	T_DIF  reduce 66
+	T_BIG  reduce 66
+	T_SMALL  reduce 66
+	T_BEQ  reduce 66
+	T_SEQ  reduce 66
+	T_COLON  reduce 66
+	T_RP  reduce 66
+	T_RSB  reduce 66
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 127
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression log_binary_operator expression .  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	T_QUES  reduce 67
+	T_SEMIC  reduce 67
+	T_AND  reduce 67
+	T_OR  reduce 67
+	T_ASS  reduce 67
+	T_PEQ  reduce 67
+	T_MIEQ  reduce 67
+	T_TEQ  reduce 67
+	T_DEQ  reduce 67
+	T_MEQ  reduce 67
+	T_COMMA  reduce 67
+	T_COLON  reduce 67
+	T_RP  reduce 67
+	T_RSB  reduce 67
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 128
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression binary_assignment expression .  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	T_SEMIC  reduce 71
+	T_PEQ  reduce 71
+	T_MIEQ  reduce 71
+	T_TEQ  reduce 71
+	T_DEQ  reduce 71
+	T_MEQ  reduce 71
+	T_COMMA  reduce 71
+	T_COLON  reduce 71
+	T_RP  reduce 71
+	T_RSB  reduce 71
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 129
+	declarations : declaration declarations .  (33)
+
+	.  reduce 33
+
+
+state 130
+	function_definition : T_VOID T_ID T_LP T_RP T_LB declarations statements . T_RB  (30)
+	statements : statements . statement  (35)
+	optional_t_id_t_colon : .  (48)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 142
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_IF  shift 143
+	T_BREAK  shift 144
+	T_CONTINUE  shift 145
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_RETURN  shift 146
+	T_TRUE  shift 48
+	T_SEMIC  shift 147
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_RB  shift 148
+	T_LB  shift 149
+	T_FOR  reduce 48
+
+	statement  goto 150
+	expression  goto 151
+	optional_t_id_t_colon  goto 152
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 131
+	function_definition : T_VOID T_ID T_LP parameter_list T_RP T_LB declarations . statements T_RB  (31)
+	statements : .  (34)
+
+	.  reduce 34
+
+	statements  goto 153
+
+
+state 132
+	parameters : T_COMMA parameter parameters .  (25)
+
+	.  reduce 25
+
+
+state 133
+	function_definition : type_t T_ID T_LP T_RP T_LB declarations statements . T_RB  (28)
+	statements : statements . statement  (35)
+	optional_t_id_t_colon : .  (48)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 142
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_IF  shift 143
+	T_BREAK  shift 144
+	T_CONTINUE  shift 145
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_RETURN  shift 146
+	T_TRUE  shift 48
+	T_SEMIC  shift 147
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_RB  shift 154
+	T_LB  shift 149
+	T_FOR  reduce 48
+
+	statement  goto 150
+	expression  goto 151
+	optional_t_id_t_colon  goto 152
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 134
+	function_definition : type_t T_ID T_LP parameter_list T_RP T_LB declarations . statements T_RB  (29)
+	statements : .  (34)
+
+	.  reduce 34
+
+	statements  goto 155
+
+
+state 135
+	expression_list : expression_list T_COMMA . expression  (79)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 156
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 136
+	expression : T_ID T_LP expression_list T_RP .  (62)
+
+	.  reduce 62
+
+
+state 137
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+	expression : T_NEW type_t T_LSB expression . T_RSB  (76)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_RSB  shift 157
+	T_LSB  shift 98
+	.  error
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 138
+	star : star T_TIMES .  (10)
+	expression : T_NEW basic_type star T_TIMES . expression  (75)
+
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_QUES  reduce 10
+	T_PLUS  reduce 10
+	T_MINUS  reduce 10
+	T_TIMES  reduce 10
+	T_DIV  reduce 10
+	T_MOD  reduce 10
+	T_SEMIC  reduce 10
+	T_AND  reduce 10
+	T_OR  reduce 10
+	T_ASS  reduce 10
+	T_PEQ  reduce 10
+	T_MIEQ  reduce 10
+	T_TEQ  reduce 10
+	T_DEQ  reduce 10
+	T_MEQ  reduce 10
+	T_COMMA  reduce 10
+	T_EQ  reduce 10
+	T_DIF  reduce 10
+	T_BIG  reduce 10
+	T_SMALL  reduce 10
+	T_BEQ  reduce 10
+	T_SEQ  reduce 10
+	T_COLON  reduce 10
+	T_RP  reduce 10
+	T_RSB  reduce 10
+	T_LSB  reduce 10
+
+	expression  goto 158
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 139
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : T_LP type_t T_RP expression .  (72)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_PP  shift 49
+	T_MM  shift 50
+	T_LSB  shift 98
+	T_QUES  reduce 72
+	T_PLUS  reduce 72
+	T_MINUS  reduce 72
+	T_TIMES  reduce 72
+	T_DIV  reduce 72
+	T_MOD  reduce 72
+	T_SEMIC  reduce 72
+	T_AND  reduce 72
+	T_OR  reduce 72
+	T_ASS  reduce 72
+	T_PEQ  reduce 72
+	T_MIEQ  reduce 72
+	T_TEQ  reduce 72
+	T_DEQ  reduce 72
+	T_MEQ  reduce 72
+	T_COMMA  reduce 72
+	T_EQ  reduce 72
+	T_DIF  reduce 72
+	T_BIG  reduce 72
+	T_SMALL  reduce 72
+	T_BEQ  reduce 72
+	T_SEQ  reduce 72
+	T_COLON  reduce 72
+	T_RP  reduce 72
+	T_RSB  reduce 72
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 140
+	expression : expression T_QUES expression T_COLON . expression  (73)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 159
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 141
+	expression : expression T_LSB expression T_RSB .  (63)
+
+	.  reduce 63
+
+
+state 142
+	optional_t_id_t_colon : T_ID . T_COLON  (49)
+	expression : T_ID .  (52)
+	expression : T_ID . T_LP T_RP  (61)
+	expression : T_ID . T_LP expression_list T_RP  (62)
+
+	T_COLON  shift 160
+	T_LP  shift 70
+	T_QUES  reduce 52
+	T_PLUS  reduce 52
+	T_MINUS  reduce 52
+	T_TIMES  reduce 52
+	T_DIV  reduce 52
+	T_MOD  reduce 52
+	T_SEMIC  reduce 52
+	T_PP  reduce 52
+	T_MM  reduce 52
+	T_AND  reduce 52
+	T_OR  reduce 52
+	T_ASS  reduce 52
+	T_PEQ  reduce 52
+	T_MIEQ  reduce 52
+	T_TEQ  reduce 52
+	T_DEQ  reduce 52
+	T_MEQ  reduce 52
+	T_COMMA  reduce 52
+	T_EQ  reduce 52
+	T_DIF  reduce 52
+	T_BIG  reduce 52
+	T_SMALL  reduce 52
+	T_BEQ  reduce 52
+	T_SEQ  reduce 52
+	T_LSB  reduce 52
+
+
+state 143
+	statement : T_IF . T_LP expression T_RP statement  (39)
+	statement : T_IF . T_LP expression T_RP statement T_ELSE statement  (40)
+
+	T_LP  shift 161
+	.  error
+
+
+state 144
+	statement : T_BREAK . T_SEMIC  (44)
+	statement : T_BREAK . T_ID T_SEMIC  (45)
+
+	T_ID  shift 162
+	T_SEMIC  shift 163
+	.  error
+
+
+state 145
+	statement : T_CONTINUE . T_SEMIC  (42)
+	statement : T_CONTINUE . T_ID T_SEMIC  (43)
+
+	T_ID  shift 164
+	T_SEMIC  shift 165
+	.  error
+
+
+state 146
+	statement : T_RETURN . T_SEMIC  (46)
+	statement : T_RETURN . expression T_SEMIC  (47)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_SEMIC  shift 166
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 167
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 147
+	statement : T_SEMIC .  (36)
+
+	.  reduce 36
+
+
+state 148
+	function_definition : T_VOID T_ID T_LP T_RP T_LB declarations statements T_RB .  (30)
+
+	.  reduce 30
+
+
+state 149
+	statement : T_LB . statements T_RB  (38)
+	statements : .  (34)
+
+	.  reduce 34
+
+	statements  goto 168
+
+
+state 150
+	statements : statements statement .  (35)
+
+	.  reduce 35
+
+
+state 151
+	statement : expression . T_SEMIC  (37)
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_SEMIC  shift 169
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	.  error
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 152
+	statement : optional_t_id_t_colon . T_FOR T_LP optional_expression T_SEMIC optional_expression T_SEMIC optional_expression T_RP statement  (41)
+
+	T_FOR  shift 170
+	.  error
+
+
+state 153
+	function_definition : T_VOID T_ID T_LP parameter_list T_RP T_LB declarations statements . T_RB  (31)
+	statements : statements . statement  (35)
+	optional_t_id_t_colon : .  (48)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 142
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_IF  shift 143
+	T_BREAK  shift 144
+	T_CONTINUE  shift 145
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_RETURN  shift 146
+	T_TRUE  shift 48
+	T_SEMIC  shift 147
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_RB  shift 171
+	T_LB  shift 149
+	T_FOR  reduce 48
+
+	statement  goto 150
+	expression  goto 151
+	optional_t_id_t_colon  goto 152
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 154
+	function_definition : type_t T_ID T_LP T_RP T_LB declarations statements T_RB .  (28)
+
+	.  reduce 28
+
+
+state 155
+	function_definition : type_t T_ID T_LP parameter_list T_RP T_LB declarations statements . T_RB  (29)
+	statements : statements . statement  (35)
+	optional_t_id_t_colon : .  (48)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 142
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_IF  shift 143
+	T_BREAK  shift 144
+	T_CONTINUE  shift 145
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_RETURN  shift 146
+	T_TRUE  shift 48
+	T_SEMIC  shift 147
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_RB  shift 172
+	T_LB  shift 149
+	T_FOR  reduce 48
+
+	statement  goto 150
+	expression  goto 151
+	optional_t_id_t_colon  goto 152
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 156
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+	expression_list : expression_list T_COMMA expression .  (79)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	T_COMMA  reduce 79
+	T_RP  reduce 79
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 157
+	expression : T_NEW type_t T_LSB expression T_RSB .  (76)
+
+	.  reduce 76
+
+
+state 158
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+	expression : T_NEW basic_type star T_TIMES expression .  (75)
+
+	T_PP  shift 49
+	T_MM  shift 50
+	T_LSB  shift 98
+	T_QUES  reduce 75
+	T_PLUS  reduce 75
+	T_MINUS  reduce 75
+	T_TIMES  reduce 75
+	T_DIV  reduce 75
+	T_MOD  reduce 75
+	T_SEMIC  reduce 75
+	T_AND  reduce 75
+	T_OR  reduce 75
+	T_ASS  reduce 75
+	T_PEQ  reduce 75
+	T_MIEQ  reduce 75
+	T_TEQ  reduce 75
+	T_DEQ  reduce 75
+	T_MEQ  reduce 75
+	T_COMMA  reduce 75
+	T_EQ  reduce 75
+	T_DIF  reduce 75
+	T_BIG  reduce 75
+	T_SMALL  reduce 75
+	T_BEQ  reduce 75
+	T_SEQ  reduce 75
+	T_COLON  reduce 75
+	T_RP  reduce 75
+	T_RSB  reduce 75
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 159
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+	expression : expression T_QUES expression T_COLON expression .  (73)
+
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	T_QUES  reduce 73
+	T_SEMIC  reduce 73
+	T_ASS  reduce 73
+	T_PEQ  reduce 73
+	T_MIEQ  reduce 73
+	T_TEQ  reduce 73
+	T_DEQ  reduce 73
+	T_MEQ  reduce 73
+	T_COMMA  reduce 73
+	T_COLON  reduce 73
+	T_RP  reduce 73
+	T_RSB  reduce 73
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 160
+	optional_t_id_t_colon : T_ID T_COLON .  (49)
+
+	.  reduce 49
+
+
+state 161
+	statement : T_IF T_LP . expression T_RP statement  (39)
+	statement : T_IF T_LP . expression T_RP statement T_ELSE statement  (40)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	.  error
+
+	expression  goto 173
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 162
+	statement : T_BREAK T_ID . T_SEMIC  (45)
+
+	T_SEMIC  shift 174
+	.  error
+
+
+state 163
+	statement : T_BREAK T_SEMIC .  (44)
+
+	.  reduce 44
+
+
+state 164
+	statement : T_CONTINUE T_ID . T_SEMIC  (43)
+
+	T_SEMIC  shift 175
+	.  error
+
+
+state 165
+	statement : T_CONTINUE T_SEMIC .  (42)
+
+	.  reduce 42
+
+
+state 166
+	statement : T_RETURN T_SEMIC .  (46)
+
+	.  reduce 46
+
+
+state 167
+	statement : T_RETURN expression . T_SEMIC  (47)
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_SEMIC  shift 176
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	.  error
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 168
+	statements : statements . statement  (35)
+	statement : T_LB statements . T_RB  (38)
+	optional_t_id_t_colon : .  (48)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 142
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_IF  shift 143
+	T_BREAK  shift 144
+	T_CONTINUE  shift 145
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_RETURN  shift 146
+	T_TRUE  shift 48
+	T_SEMIC  shift 147
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_RB  shift 177
+	T_LB  shift 149
+	T_FOR  reduce 48
+
+	statement  goto 150
+	expression  goto 151
+	optional_t_id_t_colon  goto 152
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 169
+	statement : expression T_SEMIC .  (37)
+
+	.  reduce 37
+
+
+state 170
+	statement : optional_t_id_t_colon T_FOR . T_LP optional_expression T_SEMIC optional_expression T_SEMIC optional_expression T_RP statement  (41)
+
+	T_LP  shift 178
+	.  error
+
+
+state 171
+	function_definition : T_VOID T_ID T_LP parameter_list T_RP T_LB declarations statements T_RB .  (31)
+
+	.  reduce 31
+
+
+state 172
+	function_definition : type_t T_ID T_LP parameter_list T_RP T_LB declarations statements T_RB .  (29)
+
+	.  reduce 29
+
+
+state 173
+	statement : T_IF T_LP expression . T_RP statement  (39)
+	statement : T_IF T_LP expression . T_RP statement T_ELSE statement  (40)
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_RP  shift 179
+	T_LSB  shift 98
+	.  error
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 174
+	statement : T_BREAK T_ID T_SEMIC .  (45)
+
+	.  reduce 45
+
+
+state 175
+	statement : T_CONTINUE T_ID T_SEMIC .  (43)
+
+	.  reduce 43
+
+
+state 176
+	statement : T_RETURN expression T_SEMIC .  (47)
+
+	.  reduce 47
+
+
+state 177
+	statement : T_LB statements T_RB .  (38)
+
+	.  reduce 38
+
+
+state 178
+	statement : optional_t_id_t_colon T_FOR T_LP . optional_expression T_SEMIC optional_expression T_SEMIC optional_expression T_RP statement  (41)
+	optional_expression : .  (50)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_SEMIC  reduce 50
+
+	expression  goto 180
+	optional_expression  goto 181
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 179
+	statement : T_IF T_LP expression T_RP . statement  (39)
+	statement : T_IF T_LP expression T_RP . statement T_ELSE statement  (40)
+	optional_t_id_t_colon : .  (48)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 142
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_IF  shift 143
+	T_BREAK  shift 144
+	T_CONTINUE  shift 145
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_RETURN  shift 146
+	T_TRUE  shift 48
+	T_SEMIC  shift 147
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_LB  shift 149
+	T_FOR  reduce 48
+
+	statement  goto 182
+	expression  goto 151
+	optional_t_id_t_colon  goto 152
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 180
+	optional_expression : expression .  (51)
+	expression : expression . T_LSB expression T_RSB  (63)
+	expression : expression . ar_binary_operator expression  (65)
+	expression : expression . cmp_binary_operator expression  (66)
+	expression : expression . log_binary_operator expression  (67)
+	expression : expression . T_COMMA expression  (68)
+	expression : expression . unary_assignment  (70)
+	expression : expression . binary_assignment expression  (71)
+	expression : expression . T_QUES expression T_COLON expression  (73)
+
+	T_QUES  shift 77
+	T_PLUS  shift 78
+	T_MINUS  shift 79
+	T_TIMES  shift 80
+	T_DIV  shift 81
+	T_MOD  shift 82
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AND  shift 83
+	T_OR  shift 84
+	T_ASS  shift 85
+	T_PEQ  shift 86
+	T_MIEQ  shift 87
+	T_TEQ  shift 88
+	T_DEQ  shift 89
+	T_MEQ  shift 90
+	T_COMMA  shift 91
+	T_EQ  shift 92
+	T_DIF  shift 93
+	T_BIG  shift 94
+	T_SMALL  shift 95
+	T_BEQ  shift 96
+	T_SEQ  shift 97
+	T_LSB  shift 98
+	T_SEMIC  reduce 51
+	T_RP  reduce 51
+
+	ar_binary_operator  goto 99
+	cmp_binary_operator  goto 100
+	log_binary_operator  goto 101
+	unary_assignment  goto 102
+	binary_assignment  goto 103
+
+
+state 181
+	statement : optional_t_id_t_colon T_FOR T_LP optional_expression . T_SEMIC optional_expression T_SEMIC optional_expression T_RP statement  (41)
+
+	T_SEMIC  shift 183
+	.  error
+
+
+state 182
+	statement : T_IF T_LP expression T_RP statement .  (39)
+	statement : T_IF T_LP expression T_RP statement . T_ELSE statement  (40)
+
+	T_ELSE  shift 184
+	T_PLUS  reduce 39
+	T_MINUS  reduce 39
+	T_TIMES  reduce 39
+	T_ID  reduce 39
+	T_INT  reduce 39
+	T_DOUBLE  reduce 39
+	T_CHAR  reduce 39
+	T_STRING  reduce 39
+	T_IF  reduce 39
+	T_BREAK  reduce 39
+	T_CONTINUE  reduce 39
+	T_DELETE  reduce 39
+	T_FALSE  reduce 39
+	T_NEW  reduce 39
+	T_NULL  reduce 39
+	T_RETURN  reduce 39
+	T_TRUE  reduce 39
+	T_FOR  reduce 39
+	T_SEMIC  reduce 39
+	T_PP  reduce 39
+	T_MM  reduce 39
+	T_AMP  reduce 39
+	T_EX  reduce 39
+	T_LP  reduce 39
+	T_RB  reduce 39
+	T_LB  reduce 39
+
+
+state 183
+	statement : optional_t_id_t_colon T_FOR T_LP optional_expression T_SEMIC . optional_expression T_SEMIC optional_expression T_RP statement  (41)
+	optional_expression : .  (50)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_SEMIC  reduce 50
+
+	expression  goto 180
+	optional_expression  goto 185
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 184
+	statement : T_IF T_LP expression T_RP statement T_ELSE . statement  (40)
+	optional_t_id_t_colon : .  (48)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 142
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_IF  shift 143
+	T_BREAK  shift 144
+	T_CONTINUE  shift 145
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_RETURN  shift 146
+	T_TRUE  shift 48
+	T_SEMIC  shift 147
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_LB  shift 149
+	T_FOR  reduce 48
+
+	statement  goto 186
+	expression  goto 151
+	optional_t_id_t_colon  goto 152
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 185
+	statement : optional_t_id_t_colon T_FOR T_LP optional_expression T_SEMIC optional_expression . T_SEMIC optional_expression T_RP statement  (41)
+
+	T_SEMIC  shift 187
+	.  error
+
+
+state 186
+	statement : T_IF T_LP expression T_RP statement T_ELSE statement .  (40)
+
+	.  reduce 40
+
+
+state 187
+	statement : optional_t_id_t_colon T_FOR T_LP optional_expression T_SEMIC optional_expression T_SEMIC . optional_expression T_RP statement  (41)
+	optional_expression : .  (50)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 39
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_TRUE  shift 48
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_RP  reduce 50
+
+	expression  goto 180
+	optional_expression  goto 188
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 188
+	statement : optional_t_id_t_colon T_FOR T_LP optional_expression T_SEMIC optional_expression T_SEMIC optional_expression . T_RP statement  (41)
+
+	T_RP  shift 189
+	.  error
+
+
+state 189
+	statement : optional_t_id_t_colon T_FOR T_LP optional_expression T_SEMIC optional_expression T_SEMIC optional_expression T_RP . statement  (41)
+	optional_t_id_t_colon : .  (48)
+
+	T_PLUS  shift 36
+	T_MINUS  shift 37
+	T_TIMES  shift 38
+	T_ID  shift 142
+	T_INT  shift 40
+	T_DOUBLE  shift 41
+	T_CHAR  shift 42
+	T_STRING  shift 43
+	T_IF  shift 143
+	T_BREAK  shift 144
+	T_CONTINUE  shift 145
+	T_DELETE  shift 44
+	T_FALSE  shift 45
+	T_NEW  shift 46
+	T_NULL  shift 47
+	T_RETURN  shift 146
+	T_TRUE  shift 48
+	T_SEMIC  shift 147
+	T_PP  shift 49
+	T_MM  shift 50
+	T_AMP  shift 51
+	T_EX  shift 52
+	T_LP  shift 53
+	T_LB  shift 149
+	T_FOR  reduce 48
+
+	statement  goto 190
+	expression  goto 151
+	optional_t_id_t_colon  goto 152
+	unary_operator  goto 56
+	unary_assignment  goto 57
+
+
+state 190
+	statement : optional_t_id_t_colon T_FOR T_LP optional_expression T_SEMIC optional_expression T_SEMIC optional_expression T_RP statement .  (41)
+
+	.  reduce 41
+
+
+73 terminals, 30 nonterminals
+108 grammar rules, 191 states

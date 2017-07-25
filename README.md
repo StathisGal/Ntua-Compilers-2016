@@ -1,1 +1,2 @@
-# Ntua-Compilers-2016
+# Edsger
+A compiler implementation of Edsger programming language.
